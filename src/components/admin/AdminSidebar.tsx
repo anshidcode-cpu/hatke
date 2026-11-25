@@ -2,6 +2,17 @@
 
 import React from 'react';
 import Link from 'next/link';
+import {
+  LayoutDashboard,
+  Package,
+  Truck,
+  Megaphone,
+  PartyPopper,
+  Star,
+  Wallet,
+  X,
+  ExternalLink,
+} from 'lucide-react';
 
 export type AdminNavTab =
   | 'dashboard'
@@ -33,21 +44,21 @@ export default function AdminSidebar({
     id: AdminNavTab;
     label: string;
     labelMl: string;
-    icon: string;
-    badge?: number | string;
+    Icon: React.ComponentType<{ className?: string }>;
+    badge?: string;
     badgeColor?: string;
   }[] = [
     {
       id: 'dashboard',
       label: 'Overview',
       labelMl: 'കൺസോൾ',
-      icon: 'dashboard',
+      Icon: LayoutDashboard,
     },
     {
       id: 'products',
       label: 'Products & Catalog',
       labelMl: 'ചരക്കുകൾ',
-      icon: 'inventory_2',
+      Icon: Package,
       badge: lowStockCount > 0 ? `${lowStockCount} Alert` : undefined,
       badgeColor: 'bg-[#feae32] text-[#211a16]',
     },
@@ -55,7 +66,7 @@ export default function AdminSidebar({
       id: 'orders',
       label: 'Orders & Dispatch',
       labelMl: 'ഓർഡറുകൾ',
-      icon: 'local_shipping',
+      Icon: Truck,
       badge: pendingOrdersCount > 0 ? `${pendingOrdersCount} Rush` : undefined,
       badgeColor: 'bg-[#a2004e] text-white',
     },
@@ -63,13 +74,13 @@ export default function AdminSidebar({
       id: 'marketing',
       label: 'Marketing & Growth',
       labelMl: 'പരസ്യം',
-      icon: 'campaign',
+      Icon: Megaphone,
     },
     {
       id: 'festival',
       label: 'Festival & Themes',
       labelMl: 'ഉത്സവ തീമുകൾ',
-      icon: 'celebration',
+      Icon: PartyPopper,
       badge: 'Live',
       badgeColor: 'bg-[#94d2a7] text-[#00210f]',
     },
@@ -77,7 +88,7 @@ export default function AdminSidebar({
       id: 'reviews',
       label: 'Customer Reviews',
       labelMl: 'റിവ്യൂകൾ',
-      icon: 'reviews',
+      Icon: Star,
       badge: '4.9★',
       badgeColor: 'bg-[#feae32] text-[#211a16]',
     },
@@ -85,7 +96,7 @@ export default function AdminSidebar({
       id: 'finance',
       label: 'Financials & P&L',
       labelMl: 'പണം & ലാഭം',
-      icon: 'payments',
+      Icon: Wallet,
     },
   ];
 
@@ -105,7 +116,7 @@ export default function AdminSidebar({
           mobileOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-5 overflow-y-auto">
           {/* Logo & Brand Header */}
           <div className="flex items-center justify-between">
             <Link
@@ -136,14 +147,15 @@ export default function AdminSidebar({
               className="lg:hidden p-1.5 rounded-xl hover:bg-[#94d2a7]/20 text-[#fff8f5]"
               aria-label="Close Navigation"
             >
-              <span className="material-symbols-outlined text-[20px]">close</span>
+              <X className="w-5 h-5" />
             </button>
           </div>
 
           {/* Navigation Links */}
-          <nav className="flex flex-col gap-1.5 pt-2">
+          <nav className="flex flex-col gap-1.5 pt-1">
             {navItems.map((item) => {
               const isActive = activeTab === item.id;
+              const IconComp = item.Icon;
               return (
                 <button
                   key={item.id}
@@ -151,20 +163,18 @@ export default function AdminSidebar({
                     onSelectTab(item.id);
                     onCloseMobile();
                   }}
-                  className={`flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-left transition-all group ${
+                  className={`flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-left transition-all group cursor-pointer ${
                     isActive
                       ? 'bg-[#004425] text-[#feae32] font-bold shadow-[2px_2px_0px_#111827] translate-x-1'
                       : 'text-[#fff8f5]/85 hover:bg-[#94d2a7]/15 hover:text-[#fff8f5]'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <span
-                      className={`material-symbols-outlined text-[20px] transition-transform group-hover:scale-110 ${
+                    <IconComp
+                      className={`w-5 h-5 transition-transform group-hover:scale-110 shrink-0 ${
                         isActive ? 'text-[#feae32]' : 'text-[#94d2a7]'
                       }`}
-                    >
-                      {item.icon}
-                    </span>
+                    />
                     <div>
                       <span className="font-['DM_Sans'] text-sm tracking-wide block leading-tight">
                         {item.label}
@@ -177,7 +187,7 @@ export default function AdminSidebar({
 
                   {item.badge && (
                     <span
-                      className={`text-[10px] font-['Bricolage_Grotesque'] font-bold px-2 py-0.5 rounded-full shadow-xs ${
+                      className={`text-[10px] font-['Bricolage_Grotesque'] font-bold px-2 py-0.5 rounded-full shadow-xs shrink-0 ${
                         item.badgeColor || 'bg-[#feae32] text-[#211a16]'
                       }`}
                     >
@@ -194,7 +204,7 @@ export default function AdminSidebar({
         <div className="flex flex-col gap-3 pt-4 border-t border-[#94d2a7]/20">
           <div className="bg-[#004425] p-3.5 rounded-2xl border border-[#94d2a7]/20 relative overflow-hidden">
             <div className="flex items-center justify-between mb-1.5">
-              <span className="text-[11px] font-['Bricolage_Grotesque'] font-bold text-[#feae32] uppercase tracking-wider flex items-center gap-1">
+              <span className="text-[11px] font-['Bricolage_Grotesque'] font-bold text-[#feae32] uppercase tracking-wider flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-[#feae32] animate-pulse" />
                 Vishu Kaineettam Sale
               </span>
@@ -213,25 +223,25 @@ export default function AdminSidebar({
                 onSelectTab('festival');
                 onCloseMobile();
               }}
-              className="w-full py-1.5 text-xs font-['DM_Sans'] font-bold bg-[#feae32] text-[#211a16] rounded-xl hover:bg-[#e59d28] transition-colors flex items-center justify-center gap-1.5 shadow-[1px_1px_0px_#211a16]"
+              className="w-full py-1.5 text-xs font-['DM_Sans'] font-bold bg-[#feae32] text-[#211a16] rounded-xl hover:bg-[#e59d28] transition-colors flex items-center justify-center gap-1.5 shadow-[1px_1px_0px_#211a16] cursor-pointer"
             >
-              <span className="material-symbols-outlined text-[16px]">celebration</span>
-              Manage Campaign
+              <PartyPopper className="w-3.5 h-3.5" />
+              <span>Manage Campaign</span>
             </button>
           </div>
 
           <div className="flex items-center justify-between text-xs text-[#94d2a7]/80 px-1 font-['DM_Sans']">
-            <span className="flex items-center gap-1">
+            <span className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-400" />
               Storefront Online
             </span>
             <Link
               href="/"
               target="_blank"
-              className="hover:text-[#feae32] flex items-center gap-0.5 underline text-[11px]"
+              className="hover:text-[#feae32] flex items-center gap-1 underline text-[11px]"
             >
-              Live Site
-              <span className="material-symbols-outlined text-[12px]">open_in_new</span>
+              <span>Live Site</span>
+              <ExternalLink className="w-3 h-3" />
             </Link>
           </div>
         </div>
