@@ -173,9 +173,11 @@ export default function HeroSection({ lang = 'en', onProgressUpdate }: HeroSecti
 
   // 5. Render loop
   useEffect(() => {
+    let lastRenderedProgress = -1;
+
     const loop = () => {
       const diff = targetProgressRef.current - currentProgressRef.current;
-      const lerpFactor = isMobileMode ? 0.18 : 0.24;
+      const lerpFactor = isMobileMode ? 0.22 : 0.28;
 
       if (Math.abs(diff) > 0.0001) {
         currentProgressRef.current += diff * lerpFactor;
@@ -184,16 +186,19 @@ export default function HeroSection({ lang = 'en', onProgressUpdate }: HeroSecti
       }
 
       const p = currentProgressRef.current;
-      setProgress(p);
+      if (Math.abs(p - lastRenderedProgress) > 0.0004) {
+        lastRenderedProgress = p;
+        setProgress(p);
 
-      if (onProgressUpdate) {
-        onProgressUpdate({
-          progress: p,
-          rawProgress: targetProgressRef.current,
-          scrollableDist: scrollableDistRef.current,
-          scrollY: window.scrollY,
-          isExited: p >= 0.96,
-        });
+        if (onProgressUpdate) {
+          onProgressUpdate({
+            progress: p,
+            rawProgress: targetProgressRef.current,
+            scrollableDist: scrollableDistRef.current,
+            scrollY: window.scrollY,
+            isExited: p >= 0.96,
+          });
+        }
       }
 
       const video = videoRef.current;
@@ -202,11 +207,9 @@ export default function HeroSection({ lang = 'en', onProgressUpdate }: HeroSecti
         const frameTime = Math.round(rawTime * 24) / 24;
         lastTargetTimeRef.current = frameTime;
 
-        if (!isSeekingRef.current) {
-          if (Math.abs(video.currentTime - frameTime) >= 0.02) {
-            isSeekingRef.current = true;
-            video.currentTime = frameTime;
-          }
+        if (!video.seeking && Math.abs(video.currentTime - frameTime) >= 0.02) {
+          isSeekingRef.current = true;
+          video.currentTime = frameTime;
         }
       }
 
